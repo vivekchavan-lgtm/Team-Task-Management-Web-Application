@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 import java.util.List;
+
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import com.example.demo.Entity.Task;
 import com.example.demo.Service.TaskService;
 
 import lombok.RequiredArgsConstructor;
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/tasks")
 @RequiredArgsConstructor

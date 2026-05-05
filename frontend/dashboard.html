@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input, button { padding: 8px; margin: 5px; }
+        li { background: #f1f1f1; margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+
+<h2>Dashboard</h2>
+
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<h3>Create Project</h3>
+<input id="projectName" placeholder="Project Name">
+<button onclick="createProject()">Create</button>
+
+<hr>
+
+<h3>Create Task</h3>
+<input id="title" placeholder="Title">
+<input id="desc" placeholder="Description">
+<input id="priority" placeholder="Priority">
+<input id="dueDate" type="date">
+<input id="userId" placeholder="User ID">
+<input id="projectId" placeholder="Project ID">
+<button onclick="createTask()">Create Task</button>
+
+<hr>
+
+<h3>Tasks</h3>
+<button onclick="getTasks()">Load Tasks</button>
+<ul id="tasks"></ul>
+
+<script>
+
+const BASE = "http://localhost:8080";
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location = "login.html";
+}
+
+function logout() {
+    localStorage.removeItem("token");
+    window.location = "login.html";
+}
+
+function createProject() {
+
+    const token = localStorage.getItem("token");
+
+    console.log("Sending token:", token); // 🔥 debug
+
+    fetch("http://localhost:8080/projects?name=" + document.getElementById("projectName").value, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(res => {
+        console.log("Status:", res.status);
+        if (!res.ok) throw new Error("Error: " + res.status);
+        return res.json();
+    })
+    .then(data => alert("Project Created"))
+    .catch(err => alert(err.message));
+}
+function createTask() {
+
+    const token = localStorage.getItem("token");
+
+    fetch("http://localhost:8080/tasks", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            title: document.getElementById("title").value,
+            description: document.getElementById("desc").value,
+            priority: document.getElementById("priority").value,
+            dueDate: document.getElementById("dueDate").value,
+            userId: document.getElementById("userId").value,
+            projectId: document.getElementById("projectId").value
+        })
+    })
+    .then(res => {
+        console.log("Status:", res.status);
+        if (!res.ok) throw new Error("Request failed: " + res.status);
+        return res.json();
+    })
+    .then(data => alert("Task Created"))
+    .catch(err => alert(err.message));
+}
+function getTasks() {
+    fetch(BASE + "/tasks", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        let ul = document.getElementById("tasks");
+        ul.innerHTML = "";
+
+        data.forEach(task => {
+            let li = document.createElement("li");
+            li.innerHTML = `
+                ${task.title} - ${task.status}
+                <button onclick="updateStatus(${task.id})">Update</button>
+            `;
+            ul.appendChild(li);
+        });
+    });
+}
+
+function updateStatus(id) {
+    fetch(BASE + `/tasks/${id}/status?status=DONE`, {
+        method: "PUT",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(() => alert("Updated"));
+}
+
+</script>
+
+</body>
+</html>

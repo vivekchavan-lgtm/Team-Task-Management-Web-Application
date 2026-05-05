@@ -2,9 +2,11 @@ package com.example.demo.Controller;
 
 import java.util.List;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ import com.example.demo.Entity.Project;
 import com.example.demo.Service.ProjectService;
 
 import lombok.RequiredArgsConstructor;
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/projects")
 @RequiredArgsConstructor

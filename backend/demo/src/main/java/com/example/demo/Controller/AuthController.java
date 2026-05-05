@@ -9,7 +9,7 @@ import com.example.demo.Entity.User;
 import com.example.demo.Service.AuthService;
 
 import lombok.RequiredArgsConstructor;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
