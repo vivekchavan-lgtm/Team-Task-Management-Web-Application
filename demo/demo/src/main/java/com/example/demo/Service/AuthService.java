@@ -11,7 +11,6 @@ import com.example.demo.Repo.UserRepository;
 import com.example.demo.Security.JwtUtil;
 
 import lombok.*;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -21,9 +20,16 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public String signup(User user) {
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.MEMBER);
+
         userRepository.save(user);
+
         return "User registered successfully";
     }
 
@@ -37,6 +43,7 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
+
         return new AuthResponse(token);
     }
 }

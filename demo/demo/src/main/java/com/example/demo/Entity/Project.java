@@ -1,5 +1,7 @@
 package com.example.demo.Entity;
 
+import java.util.*;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,4 +17,6 @@ public class Project {
 
     @ManyToOne
     private User admin;
+    @ManyToMany
+    private List<User> members = new ArrayList<>();
 }
