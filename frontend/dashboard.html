@@ -39,7 +39,7 @@
 
 <script>
 
-const BASE = "http://localhost:8080";
+const BASE = "https://team-task-management-web-application-production.up.railway.app";
 const token = localStorage.getItem("token");
 
 if (!token) {
@@ -57,7 +57,7 @@ function createProject() {
 
     console.log("Sending token:", token); // 🔥 debug
 
-    fetch("http://localhost:8080/projects?name=" + document.getElementById("projectName").value, {
+    fetch("https://team-task-management-web-application-production.up.railway.app/projects?name=" + document.getElementById("projectName").value, {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + token
@@ -75,7 +75,7 @@ function createTask() {
 
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:8080/tasks", {
+    fetch("https://team-task-management-web-application-production.up.railway.app/tasks", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
