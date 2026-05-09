@@ -51,7 +51,7 @@
     <div class="right-panel">
         <div class="card">
             <h3>Your Tasks</h3>
-            <button onclick="getTasks()" style="margin-bottom: 20px; background: var(--bg); color: var(--text-main); border: 1px solid var(--border);">🔄 Refresh Tasks</button>
+            <button onclick="getTasks()" style="margin-bottom: 20px; background: var(--bg); color: var(--text-main); border: 1px solid var(--border);"> Refresh Tasks</button>
             <ul id="tasks">
                 <!-- Tasks will load here -->
             </ul>
@@ -98,8 +98,8 @@ function createTask() {
             description: document.getElementById("desc").value,
             priority: document.getElementById("priority").value,
             dueDate: document.getElementById("dueDate").value,
-            userId: document.getElementById("userId").value,
-            projectId: document.getElementById("projectId").value
+            userId: document.getElementById("userId").value ? parseInt(document.getElementById("userId").value) : null,
+            projectId: document.getElementById("projectId").value ? parseInt(document.getElementById("projectId").value) : null
         })
     })
     .then(res => {
