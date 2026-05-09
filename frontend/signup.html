@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Signup</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Team Task Manager</title>
     <style>
-        body { font-family: Arial; text-align: center; margin-top: 100px; }
-        input, button { padding: 10px; margin: 5px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; margin-top: 100px; }
+        .container { background: white; padding: 20px; border: 1px solid #ccc; width: 300px; margin: 0 auto; }
+        input { width: 90%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; }
+        button { width: 95%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        a { color: #007bff; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<h2>Signup</h2>
-
-<input id="name" placeholder="Name"><br>
-<input id="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Password"><br>
-
-<button onclick="signup()">Signup</button>
-
-<p>Already have account? <a href="login.html">Login</a></p>
+<div class="container">
+    <h2>Create an Account</h2>
+    <input id="name" placeholder="Full Name">
+    <input id="email" type="email" placeholder="Email Address">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="signup()">Sign Up</button>
+    <p>Already have an account? <a href="login.html">Sign In</a></p>
+</div>
 
 <script>
 function signup() {
@@ -32,9 +36,10 @@ function signup() {
     })
     .then(res => res.text())
     .then(data => {
-        alert(data);
+        alert("Account created successfully!");
         window.location = "login.html";
-    });
+    })
+    .catch(err => alert("Signup failed. Please try again."));
 }
 </script>
 

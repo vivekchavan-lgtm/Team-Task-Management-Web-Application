@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Team Task Manager</title>
     <style>
-        body { font-family: Arial; text-align: center; margin-top: 100px; }
-        input, button { padding: 10px; margin: 5px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; margin-top: 100px; }
+        .container { background: white; padding: 20px; border: 1px solid #ccc; width: 300px; margin: 0 auto; }
+        input { width: 90%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; }
+        button { width: 95%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        a { color: #007bff; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<h2>Login</h2>
-
-<input id="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Password"><br>
-
-<button onclick="login()">Login</button>
+<div class="container">
+    <h2>Welcome Back</h2>
+    <input id="email" type="email" placeholder="Email Address">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Sign In</button>
+    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+</div>
 
 <script>
 function login() {
@@ -27,11 +33,10 @@ function login() {
         })
     })
     .then(res => {
-        if (!res.ok) throw new Error("Login failed");
+        if (!res.ok) throw new Error("Login failed. Check your credentials.");
         return res.json();
     })
     .then(data => {
-        console.log("Token:", data.token);
         localStorage.setItem("token", data.token);
         window.location.href = "dashboard.html";
     })

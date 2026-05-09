@@ -1,81 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Team Task Manager</title>
     <style>
-        body { font-family: Arial; padding: 20px; }
-        input, button { padding: 8px; margin: 5px; }
-        li { background: #f1f1f1; margin: 5px; padding: 10px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .navbar { background: white; padding: 10px 20px; border: 1px solid #ccc; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+        .container { display: flex; gap: 20px; }
+        .left-panel, .right-panel { flex: 1; }
+        .card { background: white; padding: 15px; border: 1px solid #ccc; margin-bottom: 20px; }
+        h3 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 0; }
+        input { width: 95%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; }
+        button { padding: 8px 15px; background: #007bff; color: white; border: none; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { background: #fff; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .task-status { background: #e9ecef; padding: 2px 5px; font-size: 12px; border: 1px solid #ccc; }
+        .task-status.done { background: #d4edda; }
+        .btn-update { background: #28a745; font-size: 12px; padding: 5px 10px; }
     </style>
 </head>
 <body>
 
-<h2>Dashboard</h2>
+<div class="navbar">
+    <h2>Team Task Manager</h2>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+</div>
 
-<button onclick="logout()">Logout</button>
+<div class="container">
+    <div class="left-panel">
+        <div class="card" style="margin-bottom: 30px;">
+            <h3>Create Project</h3>
+            <input id="projectName" placeholder="Project Name">
+            <button onclick="createProject()">Create Project</button>
+        </div>
 
-<hr>
+        <div class="card">
+            <h3>Create Task</h3>
+            <input id="title" placeholder="Task Title">
+            <input id="desc" placeholder="Task Description">
+            <input id="priority" placeholder="Priority (e.g., HIGH)">
+            <input id="dueDate" type="date">
+            <input id="userId" placeholder="Assignee User ID">
+            <input id="projectId" placeholder="Project ID">
+            <button onclick="createTask()">Create Task</button>
+        </div>
+    </div>
 
-<h3>Create Project</h3>
-<input id="projectName" placeholder="Project Name">
-<button onclick="createProject()">Create</button>
-
-<hr>
-
-<h3>Create Task</h3>
-<input id="title" placeholder="Title">
-<input id="desc" placeholder="Description">
-<input id="priority" placeholder="Priority">
-<input id="dueDate" type="date">
-<input id="userId" placeholder="User ID">
-<input id="projectId" placeholder="Project ID">
-<button onclick="createTask()">Create Task</button>
-
-<hr>
-
-<h3>Tasks</h3>
-<button onclick="getTasks()">Load Tasks</button>
-<ul id="tasks"></ul>
+    <div class="right-panel">
+        <div class="card">
+            <h3>Your Tasks</h3>
+            <button onclick="getTasks()" style="margin-bottom: 20px; background: var(--bg); color: var(--text-main); border: 1px solid var(--border);">🔄 Refresh Tasks</button>
+            <ul id="tasks">
+                <!-- Tasks will load here -->
+            </ul>
+        </div>
+    </div>
+</div>
 
 <script>
-
 const BASE = "https://team-task-management-web-application-production.up.railway.app";
 const token = localStorage.getItem("token");
 
-if (!token) {
-    window.location = "login.html";
-}
+if (!token) window.location = "login.html";
+
+// Auto load tasks on start
+document.addEventListener("DOMContentLoaded", getTasks);
 
 function logout() {
     localStorage.removeItem("token");
-    window.location = "login.html";
+    window.location = "index.html";
 }
 
 function createProject() {
-
-    const token = localStorage.getItem("token");
-
-    console.log("Sending token:", token); // 🔥 debug
-
-    fetch("https://team-task-management-web-application-production.up.railway.app/projects?name=" + document.getElementById("projectName").value, {
+    fetch(BASE + "/projects?name=" + document.getElementById("projectName").value, {
         method: "POST",
-        headers: {
-            "Authorization": "Bearer " + token
-        }
+        headers: { "Authorization": "Bearer " + token }
     })
     .then(res => {
-        console.log("Status:", res.status);
-        if (!res.ok) throw new Error("Error: " + res.status);
-        return res.json();
+        if (!res.ok) throw new Error("Failed to create project");
+        alert("Project Created Successfully!");
+        document.getElementById("projectName").value = "";
     })
-    .then(data => alert("Project Created"))
     .catch(err => alert(err.message));
 }
+
 function createTask() {
-
-    const token = localStorage.getItem("token");
-
-    fetch("https://team-task-management-web-application-production.up.railway.app/tasks", {
+    fetch(BASE + "/tasks", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -91,45 +103,59 @@ function createTask() {
         })
     })
     .then(res => {
-        console.log("Status:", res.status);
-        if (!res.ok) throw new Error("Request failed: " + res.status);
-        return res.json();
+        if (!res.ok) throw new Error("Failed to create task");
+        alert("Task Created Successfully!");
+        // Clear fields
+        document.getElementById("title").value = "";
+        document.getElementById("desc").value = "";
+        // Auto refresh
+        getTasks();
     })
-    .then(data => alert("Task Created"))
     .catch(err => alert(err.message));
 }
+
 function getTasks() {
     fetch(BASE + "/tasks", {
-        headers: {
-            "Authorization": "Bearer " + token
-        }
+        headers: { "Authorization": "Bearer " + token }
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to load tasks");
+        return res.json();
+    })
     .then(data => {
         let ul = document.getElementById("tasks");
         ul.innerHTML = "";
+        
+        if (data.length === 0) {
+            ul.innerHTML = "<p style='text-align:center; color:gray;'>No tasks found.</p>";
+            return;
+        }
 
         data.forEach(task => {
             let li = document.createElement("li");
+            let isDone = task.status === "DONE";
             li.innerHTML = `
-                ${task.title} - ${task.status}
-                <button onclick="updateStatus(${task.id})">Update</button>
+                <div class="task-info">
+                    <span class="task-title">${task.title}</span>
+                    <span class="task-status ${isDone ? 'done' : ''}">${task.status || 'PENDING'}</span>
+                </div>
+                ${!isDone ? '<button class="btn-update" onclick="updateStatus(' + task.id + ')">Mark Done</button>' : ''}
             `;
             ul.appendChild(li);
         });
-    });
+    })
+    .catch(err => console.error(err));
 }
 
 function updateStatus(id) {
-    fetch(BASE + `/tasks/${id}/status?status=DONE`, {
+    fetch(BASE + '/tasks/' + id + '/status?status=DONE', {
         method: "PUT",
-        headers: {
-            "Authorization": "Bearer " + token
-        }
+        headers: { "Authorization": "Bearer " + token }
     })
-    .then(() => alert("Updated"));
+    .then(() => {
+        getTasks(); // Auto refresh
+    });
 }
-
 </script>
 
 </body>
